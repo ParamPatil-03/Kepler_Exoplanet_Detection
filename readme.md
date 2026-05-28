@@ -1,58 +1,37 @@
-# Exoplanet Detection using Lightkurve: Kepler-90 Case Study
+# Finding Planets Around Kepler-90
 
-This repository contains a Jupyter Notebook that demonstrates how to analyze stellar light curve data to detect the presence of exoplanets using the transit method. The analysis focuses on **Kepler-90**, a star famous for hosting a multi-planetary system similar in scale to our own Solar System.
-
----
-
-## 🚀 Overview
-
-The workflow processes raw brightness data from the Kepler Space Telescope to identify periodic dips in light caused by a planet transiting (passing in front of) the host star. 
-
-By utilizing a **Box Least Squares (BLS)** periodogram, the script attempts to find the orbital period of the detected exoplanet candidate and evaluates the results against confirmed NASA exoplanet archive data.
+This project uses Python and a library called `lightkurve` to look for planets outside our solar system (exoplanets). We look at a star called **Kepler-90** and check its brightness over time to see if any planets are blocking its light.
 
 ---
 
-## 🛠️ Method & Code Structure
+## How the Code Works
 
-The analysis is broken down into the following key steps:
-
-### 1. Data Retrieval and Stitching
-Queries the Mikulski Archive for Space Telescopes (MAST) using `lightkurve` to find and download all available light curves for Kepler-90 recorded by the Kepler mission, stitching them into a single continuous time-series dataset.
-
-### 2. Light Curve Cleaning
-To isolate potential transit signals from stellar variability and instrumental noise, the data is preprocessed:
-* **Flattening:** A Savitzky-Golay filter (`window_length=401`) is applied to remove long-term trends.
-* **Outlier Removal:** High-sigma anomalies ($20\sigma$) and NaNs are purged.
-
-### 3. Periodogram Evaluation (BLS)
-A Box Least Squares periodogram searches across a defined linear spacing of trial periods (0.5 to 16 days) to look for the most statistically significant, recurring box-shaped dips.
-
-### 4. Phase Folding
-The light curve is phase-folded using the detected "best-fit" orbital period to overlay all individual transits on top of each other, visually confirming the transit signal profile.
+1. **Get the Data:** The code downloads data from the Kepler Space Telescope. It stitches different chunks of data together into one long timeline.
+2. **Clean Up the Noise:** Stars naturally change brightness, and space telescopes sometimes take blurry pictures. The code smooths out these slow changes and removes weird data errors so we can see the real picture.
+3. **Look for Patterns:** When a planet passes in front of a star, it blocks a tiny bit of light. This creates a dip in brightness. The code searches for these dips to guess how long a planet takes to go around the star (its orbital period).
+4. **Make a Chart:** The code lines up all the dips on top of each other to show a clean chart of the planet blocking the light.
 
 ---
 
-## 📊 Key Results & Analysis
+## What We Found
 
-| Parameter | Value / Finding |
-| :--- | :--- |
-| **Target Star** | Kepler-90 |
-| **BLS Extracted Period** | ~15.789 days |
-| **Closest Match (NASA Archive)** | Kepler-90i (~14.448 days) |
+* **The Code's Guess:** The planet goes around the star every **15.79 days**.
+* **The Real Answer:** NASA says the closest planet here (Kepler-90i) actually takes **14.45 days**.
 
-### Context & Limitations
-While the code successfully identifies a prominent planetary transit signal, the calculated period (~15.79 days) does not perfectly match the officially confirmed period of **Kepler-90i** (14.45 days). 
+### Why is there a difference?
 
-> **Why the discrepancy?**
-> 1. **Multi-Planetary Interference:** Kepler-90 is a crowded system with 8 known planets. The overlapping gravitational signals and transits of neighboring planets introduce transit timing variations (TTVs) and signal interference.
-> 2. **Harmonics/Alias Signals:** Simple BLS searches can easily latch onto mathematical harmonics or aliased frequencies of the true orbital period when dealing with dense, multi-transit data.
-> 3. **Methodology:** Kepler-90i's discovery in 2017 heavily relied on deep learning and advanced signal-parsing pipelines, proving that a standalone basic BLS method has limitations in complex systems.
+Our simple search missed the exact target by about a day and a half. Here is why:
+
+* **Too Many Planets:** Kepler-90 is a crowded home. It has 8 planets pulling on each other and crossing the star at different times. Their signals get mixed up.
+* **Math Confusion:** The code found a repeating pattern, but it likely got confused by the patterns of the other planets nearby and locked onto the wrong loop.
+* **It's a Hard Problem:** Scientists actually needed advanced AI and machine learning back in 2017 to find Kepler-90i because its signal was too weak for a simple tool like this one to get perfectly right.
 
 ---
 
-## 📦 Requirements & Installation
+## How to Run It
 
-To run this notebook locally, ensure you have Python installed along with the required libraries:
+### 1. Install the tools
+You need Python and a few libraries. Open your terminal and run:
 
 ```bash
 pip install lightkurve numpy matplotlib
